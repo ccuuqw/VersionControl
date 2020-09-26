@@ -17,8 +17,7 @@ namespace irf_3gy
         public Form1()
         {
             InitializeComponent();
-            lblLastName.Text = Resource1.LastName;
-            lblFirstName.Text = Resource1.FirstName;
+            lblFullName.Text = Resource1.FullName;
             btnAdd.Text = Resource1.Add;
             listUsers.DataSource = users;
             listUsers.ValueMember = "ID";
@@ -29,8 +28,7 @@ namespace irf_3gy
         {
             var u = new User()
             {
-                LastName = txtLastName.Text,
-                FirstName = txtFirstName.Text
+                FullName = txtFullName.Text,
             };
             users.Add(u);
         }
