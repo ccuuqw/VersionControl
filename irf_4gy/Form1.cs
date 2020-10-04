@@ -20,6 +20,7 @@ public Form1()
         {
             InitializeComponent();
             LoadData();
+            CreateExcel();
         }
         private void LoadData()
         {
@@ -75,7 +76,7 @@ public Form1()
                  "Négyzetméter ár (Ft/m2)"};
             for (int i = 0; i < headers.Length; i++)
             {
-                xlSheet.Cells[1, i + 1] = headers[0];
+                xlSheet.Cells[1, i + 1] = headers[i];
             }
             object[,] values = new object[flats.Count, headers.Length];
             int counter = 0;
@@ -98,8 +99,25 @@ public Form1()
                 GetCell(1 + values.GetLength(0), values.GetLength(1))).Value2 = values;
             for (int i = 0; i < flats.Count; i++)
             {
-                xlSheet.Cells[i + 1, 9] = "=" + GetCell(i + 1, 8) + "*1000000/" + GetCell(i + 1, 7);
+                xlSheet.Cells[i + 2, 9] = "=" + GetCell(i + 2, 8) + "*1000000/" + GetCell(i + 2, 7);
             }
+            Excel.Range headerRange = xlSheet.get_Range(GetCell(1, 1), GetCell(1, headers.Length));
+            headerRange.Font.Bold = true;
+            headerRange.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
+            headerRange.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            headerRange.EntireColumn.AutoFit();
+            headerRange.RowHeight = 40;
+            headerRange.Interior.Color = Color.LightBlue;
+            headerRange.BorderAround2(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick);
+            int lastRowID = xlSheet.UsedRange.Rows.Count;
+            Excel.Range completeTable = xlSheet.get_Range(GetCell(1, 1), GetCell(lastRowID, headers.Length));
+            completeTable.BorderAround2(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick);
+            Excel.Range firstColumn = xlSheet.get_Range(GetCell(2, 1), GetCell(lastRowID, 1));
+            firstColumn.Interior.Color = Color.LightYellow;
+            firstColumn.Font.Bold = true;
+            Excel.Range lastColumn= xlSheet.get_Range(GetCell(2, headers.Length), GetCell(lastRowID, headers.Length));
+            lastColumn.Interior.Color = Color.LightGreen;
+            lastColumn.NumberFormat = "#.00";
         }
         private string GetCell(int x, int y)
         {
