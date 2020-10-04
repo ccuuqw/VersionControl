@@ -12,9 +12,16 @@ namespace irf_4gy
 {
     public partial class Form1 : Form
     {
-        public Form1()
+        RealEstateEntities context = new RealEstateEntities();
+        List<Flat> flats;
+public Form1()
         {
             InitializeComponent();
+            LoadData();
+        }
+        private void LoadData()
+        {
+            flats = context.Flats.ToList();
         }
     }
 }
