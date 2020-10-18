@@ -21,12 +21,18 @@ namespace irf_6gy
         public Form1()
         {
             InitializeComponent();
+            RefreshData();
+        }
+
+        private void RefreshData()
+        {
+            Rates.Clear();
             var mnbService = new MNBArfolyamServiceSoapClient();
             var request = new GetExchangeRatesRequestBody()
             {
-                currencyNames = "EUR",
-                startDate = "2020-01-01",
-                endDate = "2020-06-30"
+                currencyNames = comboBox1.SelectedItem.ToString(),
+                startDate = dateTimeStart.Value.ToString(),
+                endDate = dateTimeEnd.Value.ToString()
             };
             var response = mnbService.GetExchangeRates(request);
             var result = response.GetExchangeRatesResult;
@@ -34,6 +40,7 @@ namespace irf_6gy
             newXml(result);
             newChart();
         }
+
         void newXml(string result)
         {
             var xml = new XmlDocument();
@@ -67,6 +74,21 @@ namespace irf_6gy
             chartArea.AxisX.MajorGrid.Enabled = false;
             chartArea.AxisY.MajorGrid.Enabled = false;
             chartArea.AxisY.IsStartedFromZero = false;
+        }
+
+        private void dateTimeStart_ValueChanged(object sender, EventArgs e)
+        {
+            RefreshData();
+        }
+
+        private void dateTimeEnd_ValueChanged(object sender, EventArgs e)
+        {
+            RefreshData();
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            RefreshData();
         }
     }
 }
