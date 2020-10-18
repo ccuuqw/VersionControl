@@ -1,4 +1,5 @@
-﻿using irf_6gy.MnbServiceReference;
+﻿using irf_6gy.Entities;
+using irf_6gy.MnbServiceReference;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,6 +15,7 @@ namespace irf_6gy
 
     public partial class Form1 : Form
     {
+        BindingList<RateData> Rates = new BindingList<RateData>();
         public Form1()
         {
             InitializeComponent();
@@ -26,6 +28,7 @@ namespace irf_6gy
             };
             var response = mnbService.GetExchangeRates(request);
             var result = response.GetExchangeRatesResult;
+            dataGridView1.DataSource = Rates;
         }
     }
 }
