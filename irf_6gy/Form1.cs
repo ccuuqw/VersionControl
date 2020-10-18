@@ -18,10 +18,35 @@ namespace irf_6gy
     public partial class Form1 : Form
     {
         BindingList<RateData> Rates = new BindingList<RateData>();
+        BindingList<string> Currencies = new BindingList<string>();
         public Form1()
         {
             InitializeComponent();
+            getExchangeRates();
             RefreshData();
+            comboBox1.Text = "EUR";
+        }
+
+        private void getExchangeRates()
+        {
+            var mnbService = new MNBArfolyamServiceSoapClient();
+            var request = new GetCurrenciesRequestBody()
+            {
+
+            };
+            var response = mnbService.GetCurrencies(request);
+            var result = response.GetCurrenciesResult;
+            var xml = new XmlDocument();
+            xml.LoadXml(result);
+            int sorszam = 0; //ha ide 3-at írnék, akkor a HUF-t be se olvassa
+            while (sorszam+2<xml.DocumentElement.InnerText.Length) //data-nál alkalmazott foreach csak egy elemet számít, HUF után kiugrik a ciklusból, ez végigmegy a teljes listán, még ha nem is szép megoldás
+            {
+                string curr;
+                curr = (xml.DocumentElement.InnerText[sorszam]).ToString()+(xml.DocumentElement.InnerText[sorszam+1]).ToString()+(xml.DocumentElement.InnerText[sorszam+2]).ToString();
+                Currencies.Add(curr);
+                sorszam+=3;
+            }
+            comboBox1.DataSource = Currencies;
         }
 
         private void RefreshData()
@@ -36,8 +61,8 @@ namespace irf_6gy
             };
             var response = mnbService.GetExchangeRates(request);
             var result = response.GetExchangeRatesResult;
-            dataGridView1.DataSource = Rates;
             newXml(result);
+            dataGridView1.DataSource = Rates;
             newChart();
         }
 
@@ -47,10 +72,12 @@ namespace irf_6gy
             xml.LoadXml(result);
             foreach (XmlElement element in xml.DocumentElement)
             {
+                var childElement = (XmlElement)element.ChildNodes[0];
+                if (childElement == null)
+                    continue;
                 var rate = new RateData();
                 Rates.Add(rate);
                 rate.Date = DateTime.Parse(element.GetAttribute("date"));
-                var childElement = (XmlElement)element.ChildNodes[0];
                 rate.Currency = childElement.GetAttribute("curr");
                 var unit = decimal.Parse(childElement.GetAttribute("unit"));
                 var value = decimal.Parse(childElement.InnerText);
