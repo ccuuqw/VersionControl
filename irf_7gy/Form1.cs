@@ -17,20 +17,21 @@ namespace irf_7gy
         List<Person> Population = new List<Person>();
         List<BirthProbability> BirthProbabilities = new List<BirthProbability>();
         List<DeathProbability> DeathProbabilities = new List<DeathProbability>();
+        List<int> Males = new List<int>();
+        List<int> Females = new List<int>();
         Random rng = new Random(27);
         public Form1()
         {
             InitializeComponent();
-            Population = GetPopulation(@"C:\Temp\nép-teszt.csv");
+            Population = GetPopulation(@textBox1.Text);
             BirthProbabilities = GetBirthProbabilities(@"C:\Temp\születés.csv");
             DeathProbabilities = GetDeathProbabilities(@"C:\Temp\halál.csv");
-            Simulation();
-            dataGridView1.DataSource = DeathProbabilities;
         }
 
         private void Simulation()
         {
-            for (int year = 2005; year <= 2024; year++)
+
+            for (int year = 2005; year <= numericUpDown1.Value; year++)
             {
                 // Végigmegyünk az összes személyen
                 for (int i = 0; i < Population.Count; i++)
@@ -47,6 +48,8 @@ namespace irf_7gy
                                     select x).Count();
                 Console.WriteLine(
                     string.Format("Év:{0} Fiúk:{1} Lányok:{2}", year, nbrOfMales, nbrOfFemales));
+                Males.Add(nbrOfMales);
+                Females.Add(nbrOfFemales);
             }
         }
 
@@ -143,6 +146,45 @@ namespace irf_7gy
                     újszülött.Gender = (Gender)(rng.Next(1, 3));
                     Population.Add(újszülött);
                 }
+            }
+        }
+
+        private void btnStart_Click(object sender, EventArgs e)
+        {
+            Males.Clear();
+            Females.Clear();
+            richTextBox1.Clear();
+            if (textBox1.Text!="")
+            {
+                Simulation();
+                DisplayResults();
+            }
+            else
+            {
+                MessageBox.Show("Először válasszon egy fájlt!", "Fájl hiányzik");
+            }
+        }
+
+        private void btnBrowse_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.InitialDirectory = "c:\\Temp";
+            ofd.Filter = "Comma Seperated Values (*.csv)|*.csv";
+            ofd.DefaultExt = "csv";
+            ofd.AddExtension = true;
+
+            // Ez a sor megnyitja a dialógus ablakot és csak akkor engedi tovább futni a kódot, ha az ablakot az OK gombbal zárták be
+            if (ofd.ShowDialog() != DialogResult.OK) return;
+            textBox1.Text=ofd.FileName;
+            Population.Clear();
+            Population = GetPopulation(@textBox1.Text);
+        }
+        public void DisplayResults()
+        {
+            for (int i = 0; i < Males.Count; i++)
+            {
+                richTextBox1.Text += "Szimulációs év: "+(i+2005).ToString()+"\n\tFiúk: "
+                    +Males[i]+"\n\tLányok: "+Females[i]+"\n\n";
             }
         }
     }
