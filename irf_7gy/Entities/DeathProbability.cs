@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace irf_7gy.Entities
 {
-    class DeathProbability
+    public class DeathProbability
     {
         public Gender Gender { get; set; }
         public int BirthYear { get; set; }

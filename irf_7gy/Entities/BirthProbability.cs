@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace irf_7gy.Entities
 {
-    class BirthProbability
+    public class BirthProbability
     {
         public int BirthYear { get; set; }
         public int NbrOfChildren { get; set; }
