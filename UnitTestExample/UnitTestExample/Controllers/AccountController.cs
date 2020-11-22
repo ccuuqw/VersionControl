@@ -50,7 +50,14 @@ namespace UnitTestExample.Controllers
 
         public bool ValidatePassword(string password)
         {
-            return true;
+            if (Regex.IsMatch(password, @"^[A-Za-z0-9]{8,}$") && 
+                Regex.IsMatch(password, @"([A-Z])+") &&
+                Regex.IsMatch(password, @"([a-z])+") &&
+                Regex.IsMatch(password, @"([0-9])+"))
+            {
+                return true;
+            }
+            return false;
         }
     }
 }
